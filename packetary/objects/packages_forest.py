@@ -70,7 +70,6 @@ class PackagesForest(object):
                                     if candidate not in resolved:
                                         stack.append((candidate, candidate.requires))
                                         resolved.add(candidate)
-                        else:
                             break
                 else:
                     unresolved.add(required)
