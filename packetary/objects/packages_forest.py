@@ -88,11 +88,11 @@ class PackagesForest(object):
             if candidates is not None:
                 packages = dict()
                 for candidate in candidates:
-                    packages[candidate.name] = candidates
+                    packages[candidate.name] = candidate
                 return packages.values()
 
     def get_requireds(self):
         requireds = set()
         for tree in six.itervalues(self.trees):
-            requireds = requireds.union(tree.get_requireds)
+            requireds = requireds.union(tree.get_requireds())
         return requireds
