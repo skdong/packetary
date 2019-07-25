@@ -22,7 +22,6 @@ import six
 from collections import OrderedDict
 from packetary.objects.packages_tree import PackagesTree
 
-
 logger = logging.getLogger(__package__)
 
 
@@ -65,12 +64,14 @@ class PackagesForest(object):
                 for rel in required:
                     if rel not in unresolved:
                         candidates = self.find(rel)
-                        for candidate in candidates:
-                            if candidate is not None:
-                                if candidate not in resolved:
-                                    stack.append((candidate, candidate.requires))
-                                    resolved.add(candidate)
-                                    break
+                        if candidates:
+                            for candidate in candidates:
+                                if candidate is not None:
+                                    if candidate not in resolved:
+                                        stack.append((candidate, candidate.requires))
+                                        resolved.add(candidate)
+                        else:
+                            break
                 else:
                     unresolved.add(required)
                     logger.warning("Unresolved relation: %s from %s",
