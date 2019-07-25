@@ -66,7 +66,7 @@ class PackagesForest(object):
                         candidates = self.find(rel)
                         if candidates:
                             for candidate in candidates:
-                                if candidate is not None:
+                                if candidate:
                                     if candidate not in resolved:
                                         stack.append((candidate, candidate.requires))
                                         resolved.add(candidate)
@@ -85,7 +85,7 @@ class PackagesForest(object):
         """
         for tree in six.itervalues(self.trees):
             candidates = tree.find_all(relation.name, relation.version)
-            if candidates is not None:
+            if candidates:
                 packages = dict()
                 for candidate in candidates:
                     packages[candidate.name] = candidate
