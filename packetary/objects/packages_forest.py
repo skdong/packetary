@@ -64,17 +64,18 @@ class PackagesForest(object):
             for required in requirements:
                 for rel in required:
                     if rel not in unresolved:
-                        candidate = self.find(rel)
-                        if candidate is not None:
-                            if candidate not in resolved:
-                                stack.append((candidate, candidate.requires))
-                                resolved.add(candidate)
-                            break
+                        candidates = self.find(rel)
+                        for candidate in candidates:
+                            if candidate is not None:
+                                if candidate not in resolved:
+                                    stack.append((candidate, candidate.requires))
+                                    resolved.add(candidate)
+                                    break
                 else:
                     unresolved.add(required)
                     logger.warning("Unresolved relation: %s from %s",
                                    required, pkg and pkg.name)
-        return resolved
+        return resolved.union(self.get_requireds())
 
     def find(self, relation):
         """Finds package in forest.
@@ -83,6 +84,15 @@ class PackagesForest(object):
         :return: the packages from first tree if found otherwise empty list
         """
         for tree in six.itervalues(self.trees):
-            candidate = tree.find(relation.name, relation.version)
-            if candidate is not None:
-                return candidate
+            candidates = tree.find_all(relation.name, relation.version)
+            if candidates is not None:
+                packages = dict()
+                for candidate in candidates:
+                    packages[candidate.name] = candidates
+                return packages.values()
+
+    def get_requireds(self):
+        requireds = set()
+        for tree in six.itervalues(self.trees):
+            requireds = requireds.union(tree.get_requireds)
+        return requireds

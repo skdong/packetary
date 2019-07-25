@@ -161,6 +161,7 @@ class DebRepositoryDriver(RepositoryDriverBase):
                     obsoletes=[],
                     provides=self._get_relations(dpkg, "provides"),
                     group=dpkg.get("section"),
+                    priority=dpkg.get("Priority"),
                 ))
             except KeyError as e:
                 self.logger.error(
@@ -192,6 +193,7 @@ class DebRepositoryDriver(RepositoryDriverBase):
                     debcontrol.setdefault("Origin", repository.origin)
                     debcontrol["Size"] = str(pkg.filesize)
                     debcontrol["Filename"] = pkg.filename
+                    debcontrol["Priority"] = pkg.priority
                     for k, v in six.moves.zip(_CHECKSUM_METHODS, pkg.checksum):
                         debcontrol[k] = v
                     writer(debcontrol.dump())

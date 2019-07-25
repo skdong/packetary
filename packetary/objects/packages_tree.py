@@ -127,3 +127,10 @@ class PackagesTree(object):
         # sort related packages ASC
         result.sort(key=lambda x: x.version)
         return result
+
+    def get_requireds(self):
+        requireds = set()
+        for pkg in self.packages:
+            if pkg.priority == "required":
+                requireds.add(pkg)
+        return requireds
