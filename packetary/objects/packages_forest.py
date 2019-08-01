@@ -64,11 +64,12 @@ class PackagesForest(object):
             for required in requirements:
                 for rel in required:
                     if rel not in unresolved:
-                        candidate = self.find(rel)
-                        if candidate is not None:
-                            if candidate not in resolved:
-                                stack.append((candidate, candidate.requires))
-                                resolved.add(candidate)
+                        candidates = self.find(rel)
+                        if candidates:
+                            for candidate in candidates:
+                                if candidate not in resolved:
+                                    stack.append((candidate, candidate.requires))
+                                    resolved.add(candidate)
                             break
                 else:
                     unresolved.add(required)
@@ -82,7 +83,9 @@ class PackagesForest(object):
         :param relation: the package relation
         :return: the packages from first tree if found otherwise empty list
         """
+        candidates = list()
         for tree in six.itervalues(self.trees):
-            candidate = tree.find(relation.name, relation.version)
-            if candidate is not None:
-                return candidate
+            candidates.extend(tree.find_all(relation.name, relation.version))
+
+        if candidates:
+            return candidates
